@@ -542,7 +542,6 @@ define Device/extreme-networks_ws-ap3915i
 	DEVICE_MODEL := WS-AP3915i
 	IMAGE_SIZE := 30080k
 	SOC := qcom-ipq4029
-	BLOCKSIZE := 128k
 	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | append-metadata
 endef
 TARGET_DEVICES += extreme-networks_ws-ap3915i
@@ -643,8 +642,7 @@ define Device/glinet_gl-s1300
 	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | append-metadata
 	DEVICE_PACKAGES := kmod-fs-ext4 kmod-mmc kmod-spi-dev
 endef
-# Missing DSA Setup
-#TARGET_DEVICES += glinet_gl-s1300
+TARGET_DEVICES += glinet_gl-s1300
 
 define Device/kernel-size-6350-8300
 	DEVICE_COMPAT_VERSION := 2.0
@@ -741,7 +739,7 @@ define Device/linksys_whw03
 	IMAGE_SIZE := 131072k
 	IMAGES += factory.bin
 	IMAGE/factory.bin  := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-rootfs | pad-rootfs | linksys-image type=WHW03
-	DEVICE_PACKAGES := ath10k-firmware-qca9888-ct kmod-leds-pca963x kmod-spi-dev kmod-bluetooth \
+	DEVICE_PACKAGES := ath10k-firmware-qca9888-ct kmod-leds-pca963x kmod-spi-dev kmod-hci-uart \
 		kmod-fs-ext4 e2fsprogs kmod-fs-f2fs mkf2fs losetup ipq-wifi-linksys_whw03
 endef
 TARGET_DEVICES += linksys_whw03
@@ -760,7 +758,7 @@ define Device/linksys_whw03v2
 	UBINIZE_OPTS := -E 5    # EOD marks to "hide" factory sig at EOF
 	IMAGES += factory.bin
 	IMAGE/factory.bin  := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | linksys-image type=WHW03v2
-	DEVICE_PACKAGES := ath10k-firmware-qca9888-ct kmod-leds-pca963x kmod-spi-dev kmod-bluetooth
+	DEVICE_PACKAGES := ath10k-firmware-qca9888-ct kmod-leds-pca963x kmod-spi-dev kmod-hci-uart
 endef
 TARGET_DEVICES += linksys_whw03v2
 
@@ -1092,6 +1090,19 @@ define Device/qxwlan_e2600ac-c2
 endef
 TARGET_DEVICES += qxwlan_e2600ac-c2
 
+define Device/skspruce_wia3300-20
+	$(call Device/FitzImage)
+	BLOCKSIZE := 64k
+	IMAGE_SIZE := 55104k
+	SOC := qcom-ipq4019
+	DEVICE_VENDOR := SKSpruce
+	DEVICE_MODEL := WIA3300-20
+	DEVICE_PACKAGES := -ath10k-board-qca4019 ipq-wifi-skspruce_wia3300-20
+	IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(BLOCKSIZE) | \
+		append-rootfs | pad-rootfs | check-size | append-metadata
+endef
+TARGET_DEVICES +=skspruce_wia3300-20
+
 define Device/sony_ncp-hg100-cellular
 	$(call Device/FitImage)
 	DEVICE_VENDOR := Sony
@@ -1116,7 +1127,7 @@ define Device/teltonika_rutx10
 	PAGESIZE := 2048
 	FILESYSTEMS := squashfs
 	IMAGE/factory.ubi := append-ubi | qsdk-ipq-factory-nand | append-rutx-metadata
-	DEVICE_PACKAGES := kmod-bluetooth
+	DEVICE_PACKAGES := kmod-btusb
 endef
 # Missing DSA Setup
 #TARGET_DEVICES += teltonika_rutx10
@@ -1133,7 +1144,7 @@ define Device/teltonika_rutx50
 	PAGESIZE := 2048
 	FILESYSTEMS := squashfs
 	IMAGE/factory.ubi := append-ubi
-	DEVICE_PACKAGES := ipq-wifi-teltonika_rutx kmod-usb-net-qmi-wwan kmod-usb-serial-option uqmi
+	DEVICE_PACKAGES := kmod-usb-net-qmi-wwan kmod-usb-serial-option uqmi
 endef
 TARGET_DEVICES += teltonika_rutx50
 

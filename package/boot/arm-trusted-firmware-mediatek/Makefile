@@ -9,13 +9,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=arm-trusted-firmware-mediatek
-PKG_RELEASE:=3
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=https://github.com/mtk-openwrt/arm-trusted-firmware.git
-PKG_SOURCE_DATE:=2024-01-17
-PKG_SOURCE_VERSION:=bacca82a8cac369470df052a9d801a0ceb9b74ca
-PKG_MIRROR_HASH:=1138649f64ac3982330925c38c795ca6860289adbd95755991f80afa30ebdea7
+PKG_SOURCE_DATE:=2025-02-12
+PKG_SOURCE_VERSION:=e090770684e775711a624e68e0b28112227a4c38
+PKG_MIRROR_HASH:=1ff9d60f3677aadd9a6716e860985987ba7157bd28ce831112e05c0b3170939a
 
 PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 
@@ -352,6 +352,15 @@ define Trusted-Firmware-A/mt7986-spim-nand-ddr3
   DDR_TYPE:=ddr3
 endef
 
+define Trusted-Firmware-A/mt7986-spim-nand-ubi-ddr3
+  NAME:=MediaTek MT7986 (SPI-NAND via SPIM using UBI, DDR3)
+  BOOT_DEVICE:=spim-nand
+  BUILD_SUBTARGET:=filogic
+  PLAT:=mt7986
+  DDR_TYPE:=ddr3
+  USE_UBI:=1
+endef
+
 define Trusted-Firmware-A/mt7988-nor-ddr3
   NAME:=MediaTek MT7988 (SPI-NOR, DDR3)
   BOOT_DEVICE:=nor
@@ -531,6 +540,7 @@ TFA_TARGETS:= \
 	mt7986-sdmmc-ddr3 \
 	mt7986-snand-ddr3 \
 	mt7986-spim-nand-ddr3 \
+	mt7986-spim-nand-ubi-ddr3 \
 	mt7986-ram-ddr4 \
 	mt7986-emmc-ddr4 \
 	mt7986-nor-ddr4 \
@@ -570,6 +580,7 @@ TFA_MAKE_FLAGS += \
 	$(if $(RAM_BOOT_UART_DL),RAM_BOOT_UART_DL=1) \
 	$(if $(USE_UBI),UBI=1 $(if $(findstring mt7622,$(PLAT)),OVERRIDE_UBI_START_ADDR=0x80000)) \
 	$(if $(USE_UBI),UBI=1 $(if $(findstring mt7981,$(PLAT)),OVERRIDE_UBI_START_ADDR=0x100000)) \
+	$(if $(USE_UBI),UBI=1 $(if $(findstring mt7986,$(PLAT)),OVERRIDE_UBI_START_ADDR=0x200000)) \
 	$(if $(RAM_BOOT_UART_DL),bl2,all)
 
 define Package/trusted-firmware-a-ram/install
