@@ -8,7 +8,6 @@
 
 / {
 	aliases {
-		label-mac-device = &eth0;
 		led-boot = &led_status;
 		led-failsafe = &led_status;
 		led-upgrade = &led_status;
@@ -16,14 +15,6 @@
 
 	leds {
 		compatible = "gpio-leds";
-
-		led-0 {
-			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-			color = <LED_COLOR_ID_GREEN>;
-			function = LED_FUNCTION_WLAN;
-			function-enumerator = <24>;
-			linux,default-trigger = "phy1tpt";
-		};
 
 		led_status: led-1 {
 			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
@@ -35,7 +26,7 @@
 			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
 			color = <LED_COLOR_ID_GREEN>;
 			function = LED_FUNCTION_USB;
-			trigger-sources = <&usb_port1>;
+			trigger-sources = <&hub_port0>;
 			linux,default-trigger = "usbport";
 		};
 	};
@@ -108,9 +99,6 @@
 	phy-mode = "rgmii-rxid";
 	pll-data = <0xae000000 0x80000101 0x80001313>;
 
-	nvmem-cells = <&macaddr_uboot_ethaddr 0>;
-	nvmem-cell-names = "mac-address";
-
 	gmac-config {
 		device = <&gmac>;
 
@@ -148,8 +136,8 @@
 	wifi@0,0 {
 		compatible = "qcom,ath10k";
 		reg = <0x0000 0 0 0 0>;
-		nvmem-cells = <&cal_art_5000>, <&macaddr_uboot_ethaddr 1>;
-		nvmem-cell-names = "calibration", "mac-address";
+		nvmem-cells = <&cal_art_5000>;
+		nvmem-cell-names = "calibration";
 	};
 };
 
@@ -173,14 +161,9 @@
 			};
 
 			partition@40000 {
-				compatible = "u-boot,env";
 				label = "u-boot-env";
 				reg = <0x40000 0x10000>;
 				read-only;
-
-				macaddr_uboot_ethaddr: ethaddr {
-					#nvmem-cell-cells = <1>;
-				};
 			};
 
 			partition@50000 {
@@ -241,17 +224,7 @@
 };
 
 &usb0 {
-	#address-cells = <1>;
-	#size-cells = <0>;
 	status = "okay";
-
-	dr_mode = "host";
-	vbus-supply = <&reg_usb_vbus>;
-
-	usb_port1: port@1 {
-		reg = <1>;
-		#trigger-source-cells = <0>;
-	};
 };
 
 &wdt {
@@ -261,6 +234,11 @@
 &wmac {
 	status = "okay";
 
-	nvmem-cells = <&cal_art_1000>, <&macaddr_uboot_ethaddr 0>;
-	nvmem-cell-names = "calibration", "mac-address";
+	nvmem-cells = <&cal_art_1000>;
+	nvmem-cell-names = "calibration";
+
+	led {
+		led-sources = <13>;
+		led-active-low;
+	};
 };
